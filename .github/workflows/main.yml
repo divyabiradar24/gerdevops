@@ -1,0 +1,25 @@
+name: Sync Gerrit with GitHub
+
+on:
+  push:
+    branches:
+      - master  # Adjust branch name as necessary
+  # Optionally, add a cron job to periodically sync if needed
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Push changes to GitHub
+        run: |
+          git remote add gerrit ssh://divyashreebiradar@localhost:29418/gerrit_review.git
+          git fetch gerrit
+          git checkout master
+          git pull gerrit master
+          git push origin master
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
